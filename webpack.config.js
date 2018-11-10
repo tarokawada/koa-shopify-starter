@@ -12,11 +12,18 @@ module.exports = {
         exclude: /node_modules/,
         use: ['babel-loader'],
       },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" }
+        ]
+      }
     ],
   },
   // file extensions for webpack to look at
   resolve: {
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['*','.mjs', '.js', '.jsx'],
   },
   // where webpack will output your finished bundle
   output: {
