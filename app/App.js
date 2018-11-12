@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 // import { ApolloProvider, Mutation } from 'react-apollo';
 // import ApolloClient, {gql} from 'apollo-boost';
 // import Fetch from 'react-fetch-component';
-import {AppProvider, EmptyState} from '@shopify/polaris';
+import {AppProvider, EmptyState} from "@shopify/polaris";
 
 // const client = new ApolloClient({
 //   fetchOptions: {
@@ -26,7 +26,7 @@ export default class App extends React.Component {
       <AppProvider>
         <EmptyState
           heading="Manage your deleted customers"
-          action={{content: 'Edit deleted accounts'}}
+          action={{content: "Edit deleted accounts"}}
           //secondaryAction={{content: 'Learn more', url: 'https://help.shopify.com'}}
           image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
         >
