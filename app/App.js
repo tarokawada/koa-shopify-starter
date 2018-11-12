@@ -1,13 +1,12 @@
 import React from 'react';
-import { ApolloProvider, Mutation } from 'react-apollo';
-import ApolloClient, {gql} from 'apollo-boost';
-import Fetch from 'react-fetch-component';
-import GameList from './components/GameList';
-import {AppProvider, Page, Card, ResourceList, Avatar, TextStyle, EmptyState} from '@shopify/polaris';
+// import { ApolloProvider, Mutation } from 'react-apollo';
+// import ApolloClient, {gql} from 'apollo-boost';
+// import Fetch from 'react-fetch-component';
+import {AppProvider, EmptyState} from '@shopify/polaris';
 
 // const client = new ApolloClient({
 //   fetchOptions: {
-//     credentials: 'include',
+//     credentials: 'include', // --> we can do this because of gql proxy()!
 //   },
 // });
 // const CREATE_PRODUCT = gql`
@@ -23,7 +22,7 @@ import {AppProvider, Page, Card, ResourceList, Avatar, TextStyle, EmptyState} fr
 
 export default class App extends React.Component {
   render() {
-    return(
+    return (
       <AppProvider>
         <EmptyState
           heading="Manage your deleted customers"
@@ -34,60 +33,6 @@ export default class App extends React.Component {
           <p>Manage your deleted paying customers.</p>
         </EmptyState>
       </AppProvider>
-      // <ApolloProvider client={client}>
-      //   <React.Fragment>
-      // <h1>Board game loader</h1>
-      //   <Fetch url="https://boardgameslist.herokuapp.com" as="json">
-      //     {(fetchResults) => {
-      //       if (fetchResults.loading) {
-      //         return <p>Loading</p>
-      //       }
-
-      //       if (fetchResults.error) {
-      //         return <p>fialed to fetch games</p>
-      //       }
-
-      //       return (
-      //         <Mutation mutation={CREATE_PRODUCT}>
-      //           {(createProduct, mutationResults) => {
-      //             const loading = mutationResults.loading && <p>loading... </p>;
-
-      //             const error = mutationResults.error && <p>error creating product</p>;
-
-      //             const success = mutationResults.data && (
-      //               <p>
-      //                 successfully created &nbsp;
-      //                 {mutationResults.data.productCreate.product.title}
-      //               </p>
-      //             );
-
-      //             return (
-      //               <React.Fragment>
-      //                 <GameList
-      //                   games={fetchResults.data}
-      //                   onAddGame={(title) => {
-      //                     const productInput = {
-      //                       title: title,
-      //                       productType: 'board game',
-      //                     };
-
-      //                     createProduct({
-      //                       variables: {product: productInput},
-      //                     });
-      //                   }}
-      //                 />
-      //                 {loading}
-      //                 {error}
-      //                 {success}
-      //               </React.Fragment>
-      //             );
-      //           }}
-      //         </Mutation>
-      //       )
-      //     }}
-      //   </Fetch>
-      // </React.Fragment>
-      // </ApolloProvider>
-    )
+    );
   }
 }
