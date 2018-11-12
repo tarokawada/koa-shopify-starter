@@ -6,26 +6,19 @@ import webpack from "webpack";
 import koaWebpack from "koa-webpack";
 import bodyParser from "koa-bodyparser";
 const Router = require("koa-router");
-const config = require("../webpack.config.js");
-const compiler = webpack(config);
 import proxy from "@shopify/koa-shopify-graphql-proxy";
 import renderView from "./render-view.js";
-const crypto = require("crypto");
+import webhookVerification from "../middleware/webhookVerification";
 dotenv.config();
 
-//todo: add knex and post
+//todo: add sqlize and post
 
-const {
-  SHOPIFY_SECRET,
-  SHOPIFY_API_KEY,
-  SHOPIFY_APP_HOST,
-  SHOPIFY_WH,
-} = process.env;
+const {SHOPIFY_SECRET, SHOPIFY_API_KEY, SHOPIFY_WH} = process.env;
 const app = new Koa();
+app.keys = [SHOPIFY_SECRET];
 app.use(session(app));
 app.use(bodyParser());
 const router = Router();
-app.keys = [SHOPIFY_SECRET];
 app.use(
   shopifyAuth({
     apiKey: SHOPIFY_API_KEY,
@@ -34,46 +27,30 @@ app.use(
     afterAuth(ctx) {
       const {shop, accessToken} = ctx.session;
       console.log("We did it!", shop, accessToken);
+      //todo: install webhooks -> uninstall.
       ctx.redirect("/");
     },
   }),
 );
-
+router.use(["/test"], verifyRequest()); //request must be logged in
+router.use(["/webhooks"], webhookVerification); //webhook skips verifyRequest but verified with hmac
+//todo: route for uninstalls.
 router
   .post("/test", (ctx, next) => {
     ctx.body = "test";
     ctx.response.status = 200;
     console.log("test");
   })
-  .post("/webhooks/orders/create", (ctx, next) => {
-    console.log("🎉 We got an order!");
-    ctx.response.status = 200;
-  })
-  .post(
-    "/webhooks/carts/create",
-    //todo: put it in a proper middleware
-    (ctx, next) => {
-      const hmac = ctx.get("X-Shopify-Hmac-Sha256");
-      const generated_hash = crypto
-        .createHmac("sha256", SHOPIFY_WH)
-        .update(ctx.request.rawBody, "utf8", "hex")
-        .digest("base64");
-      if (generated_hash == hmac) {
-        next();
-      } else {
-        ctx.response.status = 403;
-        console.log("webhook error");
-      }
-    },
-    (ctx, next) => {
-      console.log("We got a webhook!");
-      console.log("Details: ", ctx.request.webhook);
-      console.log("Body:", ctx.request.body);
-      //do something with the webhook
-    },
-  );
+  .post("/webhooks/carts/create", (ctx, next) => {
+    console.log("We got a webhook!");
+    console.log("Details: ", ctx.request.webhook);
+    console.log("Body:", ctx.request.body);
+    //do something with the webhook
+  });
 app.use(router.routes()).use(router.allowedMethods());
 app.use(verifyRequest());
+const config = require("../webpack.config.js");
+const compiler = webpack(config);
 koaWebpack({compiler}).then((middleware) => {
   app.use(middleware);
 });
