@@ -1,14 +1,10 @@
 import crypto from "crypto";
-import dotenv from "dotenv";
-import {Context} from "koa";
-dotenv.config();
-
-const {SHOPIFY_WH} = process.env;
 
 module.exports = (ctx, next) => {
   const hmac = ctx.get("X-Shopify-Hmac-Sha256");
+  const shopWebhook = ctx.get("X-Shopify-Shop-Domain");
   const generated_hash = crypto
-    .createHmac("sha256", SHOPIFY_WH)
+    .createHmac("sha256", process.env.SHOPIFY_SECRET)
     .update(ctx.request.rawBody, "utf8", "hex")
     .digest("base64");
   if (generated_hash == hmac) {
