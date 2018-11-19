@@ -7,12 +7,13 @@ import Router from "koa-router";
 import shopifyAuth, {verifyRequest} from "@shopify/koa-shopify-auth";
 import webpack from "webpack";
 import proxy from "@shopify/koa-shopify-graphql-proxy";
-import renderView from "./render-view.js";
+import renderView from "../middleware/renderView";
 const ShopifyAPIClient = require("shopify-api-node");
 import webhookVerification from "../middleware/webhookVerification";
 dotenv.config();
 
-//todo: add sqlize and post
+//todo: add any database you want.
+
 const registerWebhook = function(shopDomain, accessToken, webhook) {
   const shopify = new ShopifyAPIClient({
     shopName: shopDomain,
@@ -40,7 +41,13 @@ app.use(
   shopifyAuth({
     apiKey: SHOPIFY_API_KEY,
     secret: SHOPIFY_SECRET,
-    scopes: ["write_products", "read_themes", "write_themes"],
+    scopes: [
+      "write_products",
+      "read_themes",
+      "write_themes",
+      "read_script_tags",
+      "write_script_tags",
+    ],
     afterAuth(ctx) {
       const {shop, accessToken} = ctx.session;
       registerWebhook(shop, accessToken, {
@@ -57,34 +64,12 @@ app.use(
     },
   }),
 );
-router.use(["/test"], verifyRequest()); //request must be logged in
+router.use(["/api"], verifyRequest()); //all requests with /api must be verified.
 router.use(["/webhooks"], webhookVerification); //webhook skips verifyRequest but verified with hmac
-router
-  .post("/webhooks/themes/create", (ctx, next) => {
-    console.log("We got a webhook!");
-    console.log("Body:", ctx.request.body);
-    ctx.response.status = 200;
-  })
-  .post("/webhooks/customer/data-request", (ctx, next) => {
-    console.log("We got a webhook!");
-    console.log("Body:", ctx.request.body);
-    ctx.response.status = 200;
-  })
-  .post("/webhooks/customer/redact", (ctx, next) => {
-    console.log("We got a webhook!");
-    console.log("Body:", ctx.request.body);
-    ctx.response.status = 200;
-  })
-  .post("/webhooks/shop/redact", (ctx, next) => {
-    console.log("We got a webhook!");
-    console.log("Body:", ctx.request.body);
-    ctx.response.status = 200;
-  })
-  .post("/webhooks/themes/delete", (ctx, next) => {
-    console.log("We got a webhook!");
-    console.log("Body:", ctx.request.body);
-    ctx.response.status = 200;
-  });
+
+require("./routes/webhookRoutes")(router);
+require("./routes/deleteAppRoutes")(router);
+
 app.use(router.routes()).use(router.allowedMethods());
 app.use(verifyRequest());
 const config = require("../webpack.config.js");
