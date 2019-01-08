@@ -33,6 +33,7 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.10.0",
     "koa-webpack": "^5.1.1",
+    "lodash": "^4.17.11",
     "react": "^16.6.1",
     "react-apollo": "^2.2.4",
     "react-dom": "^16.6.1",
