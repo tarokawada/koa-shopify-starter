@@ -1,5 +1,9 @@
 import dotenv from "dotenv";
 import Koa from "koa";
+var serve = require("koa-static");
+import mount from "koa-mount";
+import views from "koa-views";
+import path from "path";
 import session from "koa-session";
 import koaWebpack from "koa-webpack";
 import bodyParser from "koa-bodyparser";
@@ -11,6 +15,13 @@ const ShopifyAPIClient = require("shopify-api-node");
 import webhookVerification from "../middleware/webhookVerification";
 import appProxy from "../middleware/appProxy";
 dotenv.config();
+
+const {
+  SHOPIFY_SECRET,
+  SHOPIFY_API_KEY,
+  SHOPIFY_APP_HOST,
+  NODE_ENV,
+} = process.env;
 
 //todo: add any database you want.
 
@@ -31,7 +42,6 @@ const registerWebhook = function(shopDomain, accessToken, webhook) {
         ),
     );
 };
-const {SHOPIFY_SECRET, SHOPIFY_API_KEY, SHOPIFY_APP_HOST} = process.env;
 const app = new Koa();
 const isDev = NODE_ENV !== "production";
 app.use(views(path.join(__dirname, "views"), {extension: "ejs"}));
