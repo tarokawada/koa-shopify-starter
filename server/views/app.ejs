@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://sdks.shopifycdn.com/polaris/3.3.0/polaris.min.css" />
+  </head>
+  <body>
+    
+    <script>
+      window.apiKey = "<%= apiKey %>";
+      window.shopOrigin = "<%= shop %>";
+      // const shopifyAppConfig = {
+      //   apiKey: window.apiKey,
+      //   shopOrigin: window.shopOrigin,
+      //   forceRedirect: false,
+      // };
+      // ShopifyApp.init(shopifyAppConfig);
+    </script>
+
+    <div id="app"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>

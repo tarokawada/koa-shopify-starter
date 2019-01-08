@@ -1,6 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "@shopify/polaris/styles.css";
+import "isomorphic-fetch";
+import * as React from "react";
+import {render} from "react-dom";
 import App from "../app/App.js";
 
-ReactDOM.hydrate(<App />, document.getElementById("app"));
+function renderApp() {
+  render(<App />, document.getElementById("app"));
+}
+
+renderApp();
+
+if (module.hot) {
+  module.hot.accept();
+}
